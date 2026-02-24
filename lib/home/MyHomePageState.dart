@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:transacao/model/estatistica.dart';
-import 'package:transacao/services/TransacaoService.dart';
+import 'package:transacao/services/transacaoService.dart';
 
 import 'MyHomePage.dart';
 
