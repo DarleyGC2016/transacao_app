@@ -5,7 +5,7 @@ import 'package:transacao/services/transacaoService.dart';
 import 'MyHomePage.dart';
 
 class MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+
   late Future<Estatistica> estatisticaFuture;
 
   @override
