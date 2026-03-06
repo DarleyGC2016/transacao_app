@@ -1,0 +1,35 @@
+import 'package:flutter/material.dart';
+import 'package:transacao/model/estatistica.dart';
+import 'package:transacao/services/transacao_service.dart';
+
+import '../grafico/dashboard.dart';
+import 'my_home_page.dart';
+
+class MyHomePageState extends State<MyHomePage> {
+
+  late Future<Estatistica> estatisticaFuture;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    estatisticaFuture = TransacaoService().calcularEstatistica();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
+        title: Text(widget.title),
+      ),
+      body:
+         Center(
+           child: DashboardPage(),
+         )
+    );
+  }
+}
