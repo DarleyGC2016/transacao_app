@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:transacao/model/estatistica.dart';
-import 'package:transacao/services/transacao_service.dart';
 
 import '../grafico/dashboard.dart';
 import 'my_home_page.dart';
