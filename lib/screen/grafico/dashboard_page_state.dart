@@ -1,10 +1,13 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../model/estatistica.dart';
 import '../../services/transacao_service.dart';
 import '../../widgets/card/block_card.dart';
+import '../../widgets/card/button_card.dart';
 import 'dashboard.dart';
 
 class DashboardPageState  extends State<DashboardPage> with  SingleTickerProviderStateMixin{
@@ -35,14 +38,11 @@ class DashboardPageState  extends State<DashboardPage> with  SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:FutureBuilder(
+        body:FutureBuilder<Estatistica>(
             future: estatisticaFuture,
             builder: (context, snapshot){
-              if ( snapshot.connectionState == ConnectionState.waiting) {
-                return Center( child: CircularProgressIndicator());
-              }
-              final es = snapshot.data;
-              return _grafico(es!);
+
+              return _resultadoEstatistica(snapshot);
             })
     );
   }
@@ -160,7 +160,7 @@ class DashboardPageState  extends State<DashboardPage> with  SingleTickerProvide
                                     .count
                                     .toString(),
                                     color: 0xff3B82F6),
-                                _buttonCard("Nova Transacao")
+                                ButtonCard()
                               ],
                        ))
           ],
@@ -168,30 +168,31 @@ class DashboardPageState  extends State<DashboardPage> with  SingleTickerProvide
     );
   }
 
+  Widget _resultadoEstatistica(AsyncSnapshot<Estatistica> snapshot) {
 
-  Widget _buttonCard(String title) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.45),
-              blurRadius: 10,
-              offset: Offset(0, 6),
-            )
-          ]
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment
-            .center,
-        children: [
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (snapshot.hasError) {
+      final error = snapshot.error;
+      return  Center(
+         child: Text(error is FormatException ? error.message : error.toString()),
+      );
 
+    }
+    if (snapshot.hasData ){
 
-        ],
-      ),
-    );
+      return _grafico(snapshot.data!);
+    } else {
+
+      return Center(
+          child: Text("Nenhum dado encontrado!")
+      );
+    }
   }
+
+
 
 }

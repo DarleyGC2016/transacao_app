@@ -44,7 +44,6 @@ class Estatistica {
     _min = nMin;
   }
 
-
    Estatistica({
     required int contador,
     required double soma,
@@ -79,6 +78,10 @@ class Estatistica {
          .toList()
      );
 
+  }
+
+  void sendError(String error){
+       throw Exception(error);
   }
 
   @override

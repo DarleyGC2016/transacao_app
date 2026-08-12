@@ -7,13 +7,10 @@ import 'my_home_page.dart';
 
 class MyHomePageState extends State<MyHomePage> {
 
-  late Future<Estatistica> estatisticaFuture;
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    estatisticaFuture = TransacaoService().calcularEstatistica();
   }
 
   @override
