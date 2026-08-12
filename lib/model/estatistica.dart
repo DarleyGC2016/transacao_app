@@ -1,9 +1,13 @@
+
 class Estatistica {
   late int _count;
   late double _sum;
   late double _avg;
   late double _min;
   late double _max;
+  late String _time;
+  late String _date;
+  late List<double> _values;
 
   int get count => _count;
 
@@ -11,9 +15,15 @@ class Estatistica {
 
   double get sum => _sum;
 
-  double get getMax => _max;
+  double get max => _max;
 
-  double get getMin => _min;
+  double get min => _min;
+
+  String get time => _time;
+
+  String get date => _date;
+
+  List<double> get values => _values;
 
    set setCount( int contador){
     _count = contador;
@@ -34,19 +44,24 @@ class Estatistica {
     _min = nMin;
   }
 
-
    Estatistica({
     required int contador,
     required double soma,
     required double media,
     required double minimo,
     required double maximo,
+    required String tempo,
+    required String data,
+    required List<double> valor
   }){
      _count = contador;
      _sum = soma;
      _avg = media;
      _min = minimo;
-     _max = maximo;
+      _max = maximo;
+     _time = tempo ;
+     _date = data;
+     _values = valor;
    }
 
   factory Estatistica.fromJson(Map<String, dynamic> json) {
@@ -55,7 +70,18 @@ class Estatistica {
         soma: (json['sum'] as num).toDouble(),
         media: (json['avg'] as num).toDouble(),
         minimo: (json['min'] as num).toDouble(),
-        maximo: (json['max'] as num).toDouble());
+        maximo: (json['max'] as num).toDouble(),
+        tempo: (json['time'] as String),
+        data:  (json['date'] as String),
+        valor:(json['values'] as List<dynamic>)
+         .map((e) => (e as num).toDouble())
+         .toList()
+     );
+
+  }
+
+  void sendError(String error){
+       throw Exception(error);
   }
 
   @override
