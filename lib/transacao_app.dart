@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'screen/home/my_home_page.dart';
+import 'screen/home/home_page.dart';
 
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TransacaoApp extends StatelessWidget {
+  const TransacaoApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Transacao',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -27,9 +26,9 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-          colorScheme: .fromSeed(seedColor: Colors.green),
-    ),
-    home: const MyHomePage(title: 'Transações Financeiras'),
+        colorScheme: .fromSeed(seedColor: Colors.green),
+      ),
+      home: const HomePage(title: 'Transações Financeiras'),
     );
   }
 }
