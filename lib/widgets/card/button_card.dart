@@ -6,14 +6,19 @@ class ButtonCard extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
   final VoidCallback onPressed;
+  final double? textFontSize;
+
+  final Size? buttonSize;
 
   const ButtonCard({
     super.key,
     required this.label,
+    required this.onPressed,
     this.icon,
     this.backgroundColor,
     this.textColor,
-    required this.onPressed,
+    this.textFontSize,
+    this.buttonSize,
   });
 
   @override
@@ -31,11 +36,24 @@ class ButtonCard extends StatelessWidget {
         ),
         backgroundColor: backgroundColor,
         foregroundColor: textColor,
+        textStyle: TextStyle(
+          fontSize: textFontSize,
+          fontWeight: FontWeight.bold,
+        ),
+        alignment: Alignment.center,
+        fixedSize: buttonSize,
       ),
+
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(children: [?icon, Text(label)]),
+          Row(
+            children: [
+              ?icon,
+              Text(label, textAlign: TextAlign.center),
+            ],
+          ),
         ],
       ),
     );

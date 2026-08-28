@@ -63,7 +63,7 @@ class _DashboardPageState extends State<DashboardPage>
     if (snapshot.hasData) {
       return DashboardGrafico(
         animation: _animation,
-        formato: _formato,
+        numberFormat: _formato,
         estatistica: snapshot.data!,
       );
     }
