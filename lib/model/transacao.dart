@@ -1,16 +1,19 @@
 class Transacao {
-  late double _valor;
-  late String _dataHora;
+  final double _valor;
+  final String _dataHora;
 
-  double get valor => _valor;
+  Transacao({required double valor, required String dataHora})
+    : _dataHora = dataHora,
+      _valor = valor;
 
-  String get dataHora => _dataHora;
-
-  set valor(double valor) {
-    _valor = valor;
+  factory Transacao.fromJson(Map<String, dynamic> json) {
+    return Transacao(
+      valor: (json['valor'] as num).toDouble(),
+      dataHora: json['dataHora'] as String,
+    );
   }
 
-  set dataHora(String dataHora) {
-    _dataHora = dataHora;
+  Map<String, dynamic> toJson() {
+    return {'valor': _valor, 'dataHora': _dataHora};
   }
 }

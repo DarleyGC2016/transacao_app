@@ -11,12 +11,14 @@ class DashboardGrafico extends StatelessWidget {
   final Animation<double> animation;
   final NumberFormat numberFormat;
   final Estatistica estatistica;
+  final VoidCallback onUpdate;
 
   const DashboardGrafico({
     super.key,
     required this.animation,
     required this.numberFormat,
     required this.estatistica,
+    required this.onUpdate,
   });
 
   @override
@@ -53,11 +55,59 @@ class DashboardGrafico extends StatelessWidget {
 
   Widget _boxGraphic(Estatistica es) {
     return SizedBox(
-      height: 250,
+      height: 300,
       child: BarChart(
         BarChartData(
           minY: 0,
-          maxY: es.sum.ceilToDouble(),
+          maxY: es.max.ceilToDouble() * 1.1,
+
+          // Títulos dos eixos
+          titlesData: FlTitlesData(
+            // Eixo X
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 30,
+                interval: 20,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt().toString(),
+                    style: const TextStyle(
+                      fontSize: 5.5,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // Eixo Y esquerdo
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 40,
+                interval: 1000,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    _formatarQuantidade(value),
+                    style: const TextStyle(fontSize: 10),
+                  );
+                },
+              ),
+            ),
+
+            // Não mostrar eixo Y direito
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+
+            // Não mostrar eixo superior
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+
+          // Linha da média
           extraLinesData: ExtraLinesData(
             horizontalLines: [
               HorizontalLine(
@@ -68,17 +118,20 @@ class DashboardGrafico extends StatelessWidget {
               ),
             ],
           ),
+
+          // Barras
           barGroups: es.values.asMap().entries.map((entry) {
             int index = entry.key;
             double value = entry.value * animation.value;
+
             return BarChartGroupData(
               x: index,
               barRods: [
                 BarChartRodData(
                   toY: value,
-                  width: 18,
+                  width: 8,
                   borderRadius: BorderRadius.circular(6),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFFFFFF00), Color(0xFF006400)],
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
@@ -98,7 +151,7 @@ class DashboardGrafico extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 14,
         mainAxisSpacing: 14,
-        childAspectRatio: 1.8,
+        childAspectRatio: 1.5,
         children: [
           BlockCard(
             title: "Média",
@@ -175,17 +228,50 @@ class DashboardGrafico extends StatelessWidget {
               ],
             ),
           ),
-          ButtonCard(
-            label: "Nova Transação",
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FormTransacaoPage()),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: ButtonCard(
+              label: "Nova Transação",
+              onPressed: () async {
+                final flag = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FormTransacaoPage()),
+                );
+
+                if (flag == true) {
+                  onUpdate();
+                }
+              },
+              icon: Icon(
+                Icons.monetization_on_outlined,
+                shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 10,
+                    offset: Offset(2, 2),
+                  ),
+                ],
+              ),
+              backgroundColor: Color.from(
+                alpha: 1,
+                red: 0.8,
+                green: 1,
+                blue: 0.7,
+              ),
+              textFontSize: 25,
+              buttonSize: Size(240, 160),
             ),
-            icon: Icon(Icons.add),
-            textFontSize: 18,
           ),
         ],
       ),
     );
+  }
+
+  String _formatarQuantidade(double value) {
+    if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(0)}K';
+    }
+
+    return value.toInt().toString();
   }
 }

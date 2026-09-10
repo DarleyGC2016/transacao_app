@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show InputDecoration, TextFormField;
 
 class InputTempo extends StatelessWidget {
-  var onTap;
+  final VoidCallback onTap;
 
   final TextEditingController timeController;
 
-  late final Widget? icone;
+  final Widget? icone;
 
   final String label;
 

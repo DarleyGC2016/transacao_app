@@ -31,14 +31,21 @@ class BlockCard extends StatelessWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             spacing: 5,
             children: [
-              ?icon,
-              Text(title, style: TextStyle(color: Colors.white, fontSize: 25)),
+              if (icon != null) ...[icon!, SizedBox(width: 5)],
+              Flexible(
+                child: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 25),
+                ),
+              ),
             ],
           ),
           SizedBox(height: 8),

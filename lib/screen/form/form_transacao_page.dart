@@ -3,10 +3,13 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInputFormatter;
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:transacao/model/transacao.dart';
+import 'package:transacao/services/transacao_service.dart';
 import 'package:transacao/widgets/input/input_moeda_br.dart';
 import 'package:transacao/widgets/input_tempo.dart';
 
 import '../../widgets/card/button_card.dart' show ButtonCard;
+import '../../widgets/card/button_load_card.dart' show ButtonLoadCard;
 
 class FormTransacaoPage extends StatefulWidget {
   const FormTransacaoPage({super.key});
@@ -25,19 +28,19 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
         decimalDigits: 2,
       );
 
-  double _valorFinal = 0.0;
-  String text = '';
-  late DateTime _data;
+  late double _moeda = 0.0;
   late TextEditingController _dateController;
-
   late TextEditingController _timeController;
-
-  late TimeOfDay _hora;
+  late TimeOfDay? _hora;
+  late DateTime? _data;
+  late bool _isCarregando;
 
   @override
   void initState() {
     super.initState();
-
+    _isCarregando = false;
+    _data = null;
+    _hora = null;
     _dateController = TextEditingController();
     _timeController = TextEditingController();
   }
@@ -65,7 +68,7 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
 
               InputMoedaBr(
                 label: "Dinheiro",
-                moeda: _valorFinal,
+                moeda: _moeda,
                 validator: (moeda) {
                   if (moeda == null || moeda.isEmpty) {
                     return "Informe o valor do dinheiro!";
@@ -73,12 +76,7 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
                   return null;
                 },
                 onChanged: (textFormattedUpdated) {
-                  setState(() {
-                    _formatter.formatString(
-                      textFormattedUpdated,
-                    ); // atualizar o valor da moeda.
-                    _valorFinal = _formatter.getUnformattedValue().toDouble();
-                  });
+                  _changedMoeda(textFormattedUpdated);
                 },
                 textInputFormatter: <TextInputFormatter>[_formatter],
               ),
@@ -117,32 +115,16 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ButtonCard(
-                    label: "Salvar",
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final tempo = _formatDateTime();
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(tempo)));
-                      }
-                    },
-                    icon: Icon(Icons.save),
-                    backgroundColor: Color.from(
-                      alpha: 1,
-                      red: 0.1,
-                      green: 1,
-                      blue: 0.4,
-                    ),
-                    textColor: Colors.white,
-                    textFontSize: 20,
-                    buttonSize: Size(160, 80),
+                  ButtonLoadCard(
+                    onPressed: _save,
+                    flag: _isCarregando,
+                    iconTroca: true,
                   ),
                   SizedBox(width: 10),
                   ButtonCard(
                     label: "Cancelar",
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, true);
                     },
                     icon: Icon(Icons.cancel),
                     backgroundColor: Color.from(
@@ -165,32 +147,17 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
   }
 
   String _formatDateTime() {
-    DateTime? dateTime = _validaSegundo();
-    if (dateTime == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Insira um novo minuto!')));
-      return '';
-    } else {
-      Navigator.pop(context);
-      return dateTime.toUtc().toIso8601String();
-    }
-  }
-
-  DateTime? _validaSegundo() {
     DateTime cliqueButton = DateTime.now();
-    if (cliqueButton.second >= 59) {
-      return null;
-    }
-    return DateTime(
-      _data.year,
-      _data.month,
-      _data.day,
-      _hora.hour,
-      _hora.minute,
+    DateTime? dateTime = DateTime(
+      _data!.year,
+      _data!.month,
+      _data!.day,
+      _hora!.hour,
+      _hora!.minute,
       cliqueButton.second,
       cliqueButton.millisecond,
     );
+    return dateTime.toUtc().toIso8601String();
   }
 
   Future<void> _selectHora(BuildContext context) async {
@@ -219,6 +186,62 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
         _data = data;
         _dateController.text = DateFormat('dd/MM/yyyy').format(data);
       });
+    }
+  }
+
+  void _changedMoeda(String textFormattedUpdated) {
+    setState(() {
+      _formatter.formatString(
+        textFormattedUpdated,
+      ); // atualizar o valor da moeda.
+      _moeda = _formatter.getUnformattedValue().toDouble();
+    });
+  }
+
+  Future<void> _save() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        setState(() {
+          _isCarregando = true;
+        });
+        final resp = await TransacaoService().save(
+          Transacao(valor: _moeda, dataHora: _formatDateTime()),
+        );
+        await Future.delayed(const Duration(seconds: 3));
+        if (!mounted) {
+          return;
+        }
+        switch (resp.statusCode) {
+          case 201:
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('${resp.body} 🎉')));
+            Navigator.pop(context, true);
+            break;
+          case 422:
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('${resp.body} 😡')));
+            break;
+          case 500:
+            _moeda = 0;
+            setState(() {
+              _hora = null;
+              _data = null;
+            });
+
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('${resp.body} 🤬')));
+            break;
+        }
+      } catch (e) {
+        Navigator.pop(context, true);
+      } finally {
+        setState(() {
+          _isCarregando = false;
+        });
+      }
     }
   }
 }

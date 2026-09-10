@@ -32,7 +32,7 @@ class _DashboardPageState extends State<DashboardPage>
       parent: _controller,
       curve: Curves.easeOutCubic,
     );
-    estatisticaFuture = TransacaoService().calcularEstatistica();
+    _atualizarDashboard();
     _formato = NumberFormat.currency(locale: "pt_BR", symbol: "R\$");
     _controller.forward();
   }
@@ -65,14 +65,15 @@ class _DashboardPageState extends State<DashboardPage>
         animation: _animation,
         numberFormat: _formato,
         estatistica: snapshot.data!,
+        onUpdate: () {
+          _atualizarDashboard();
+        },
       );
     }
     if (snapshot.hasError) {
       final error = snapshot.error;
-
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-
         children: [
           Center(
             child: BlockCard(
@@ -87,7 +88,15 @@ class _DashboardPageState extends State<DashboardPage>
         ],
       );
     } else {
+      Navigator.pop(context, true);
       return Text('');
     }
+  }
+
+  void _atualizarDashboard() {
+    setState(() {
+      estatisticaFuture = TransacaoService().calcularEstatistica();
+      _controller.forward(from: 0.0);
+    });
   }
 }

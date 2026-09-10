@@ -7,7 +7,6 @@ class ButtonCard extends StatelessWidget {
   final Color? textColor;
   final VoidCallback onPressed;
   final double? textFontSize;
-
   final Size? buttonSize;
 
   const ButtonCard({
@@ -24,13 +23,10 @@ class ButtonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      // onPressed: () {
-      //   Navigator.push(context, MaterialPageRoute(builder: (context) => tela));
-      // },
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         elevation: 8,
-        shadowColor: Colors.black.withValues(alpha: 0.45),
+        shadowColor: Colors.black.withValues(alpha: 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.5),
         ),
@@ -42,6 +38,7 @@ class ButtonCard extends StatelessWidget {
         ),
         alignment: Alignment.center,
         fixedSize: buttonSize,
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       ),
 
       child: Column(
@@ -49,9 +46,20 @@ class ButtonCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              ?icon,
-              Text(label, textAlign: TextAlign.center),
+              if (icon != null) ...[icon!, SizedBox(width: 6)],
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  textScaler: TextScaler.noScaling,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ],
