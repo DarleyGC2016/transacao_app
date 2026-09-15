@@ -6,7 +6,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:transacao/model/transacao.dart';
 import 'package:transacao/services/transacao_service.dart';
 import 'package:transacao/widgets/input/input_moeda_br.dart';
-import 'package:transacao/widgets/input_tempo.dart';
+import 'package:transacao/widgets/input/input_tempo.dart';
 
 import '../../widgets/card/button_card.dart' show ButtonCard;
 import '../../widgets/card/button_load_card.dart' show ButtonLoadCard;
@@ -57,89 +57,100 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
     return Scaffold(
       appBar: AppBar(title: const Text('Nova Transação')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text('Formulario'),
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Formulario'),
 
-              InputMoedaBr(
-                label: "Dinheiro",
-                moeda: _moeda,
-                validator: (moeda) {
-                  if (moeda == null || moeda.isEmpty) {
-                    return "Informe o valor do dinheiro!";
-                  }
-                  return null;
-                },
-                onChanged: (textFormattedUpdated) {
-                  _changedMoeda(textFormattedUpdated);
-                },
-                textInputFormatter: <TextInputFormatter>[_formatter],
-              ),
-              SizedBox(height: 20),
-              InputTempo(
-                label: 'Data',
-                hintText: "dd/mm/yyyy",
-                validator: (data) {
-                  if (data == null || data.isEmpty) {
-                    return "Escolha uma data";
-                  }
-                  return null;
-                },
-                onTap: () {
-                  _selectData(context);
-                },
-                timeController: _dateController,
-              ),
-              const SizedBox(height: 20),
-              InputTempo(
-                label: 'Horas',
-                hintText: "00:00:00",
-                icone: Icon(Icons.access_time),
-                timeController: _timeController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Por favor, selecione a horas";
-                  }
-                  return null;
-                },
-                onTap: () {
-                  _selectHora(context);
-                },
-              ),
-              const SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ButtonLoadCard(
-                    onPressed: _save,
-                    flag: _isCarregando,
-                    iconTroca: true,
-                  ),
-                  SizedBox(width: 10),
-                  ButtonCard(
-                    label: "Cancelar",
-                    onPressed: () {
-                      Navigator.pop(context, true);
-                    },
-                    icon: Icon(Icons.cancel),
-                    backgroundColor: Color.from(
-                      alpha: 1,
-                      red: 1,
-                      green: 0.1,
-                      blue: 0.1,
+                InputMoedaBr(
+                  label: "Dinheiro",
+                  moeda: _moeda,
+                  validator: (moeda) {
+                    if (moeda == null || moeda.isEmpty) {
+                      return "Informe o valor do dinheiro!";
+                    }
+                    return null;
+                  },
+                  onChanged: (textFormattedUpdated) {
+                    _changedMoeda(textFormattedUpdated);
+                  },
+                  textInputFormatter: <TextInputFormatter>[_formatter],
+                ),
+                SizedBox(height: 20),
+                InputTempo(
+                  label: 'Data',
+                  hintText: "dd/mm/aaaa",
+                  icone: Icon(Icons.calendar_month_sharp),
+                  validator: (data) {
+                    if (data == null || data.isEmpty) {
+                      return "Escolha uma data";
+                    }
+                    return null;
+                  },
+                  onTap: () {
+                    _selectData(context);
+                  },
+                  timeController: _dateController,
+                ),
+                const SizedBox(height: 20),
+                InputTempo(
+                  label: 'Hora',
+                  hintText: "00:00",
+                  icone: Icon(Icons.access_time),
+                  timeController: _timeController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Por favor, selecione a hora";
+                    }
+                    return null;
+                  },
+                  onTap: () {
+                    _selectHora(context);
+                  },
+                ),
+                const SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ButtonLoadCard(
+                      onPressed: _save,
+                      flag: _isCarregando,
+                      backgroundColor: Color.from(
+                        alpha: 1,
+                        red: 0.1,
+                        green: 1,
+                        blue: 0.4,
+                      ),
+                      textColor: Colors.white,
+                      textFontSize: 20,
+                      buttonSize: Size(160, 80),
                     ),
-                    textColor: Colors.white,
-                    textFontSize: 20,
-                    buttonSize: Size(160, 80),
-                  ),
-                ],
-              ),
-            ],
+                    SizedBox(width: 10),
+                    ButtonCard(
+                      label: "Cancelar",
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                      icon: Icon(Icons.cancel),
+                      backgroundColor: Color.from(
+                        alpha: 1,
+                        red: 1,
+                        green: 0.1,
+                        blue: 0.1,
+                      ),
+                      textColor: Colors.white,
+                      textFontSize: 20,
+                      buttonSize: Size(160, 80),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

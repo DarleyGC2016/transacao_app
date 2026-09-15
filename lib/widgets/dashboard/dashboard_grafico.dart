@@ -68,12 +68,12 @@ class DashboardGrafico extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
-                interval: 20,
+                interval: 10,
                 getTitlesWidget: (value, meta) {
                   return Text(
                     value.toInt().toString(),
                     style: const TextStyle(
-                      fontSize: 5.5,
+                      fontSize: 10,
                       fontStyle: FontStyle.normal,
                     ),
                   );

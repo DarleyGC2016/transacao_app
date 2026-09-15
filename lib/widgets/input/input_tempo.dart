@@ -12,9 +12,9 @@ class InputTempo extends StatelessWidget {
 
   final String hintText;
 
-  FormFieldValidator<String> validator;
+  final FormFieldValidator<String> validator;
 
-  InputTempo({
+  const InputTempo({
     super.key,
     required this.label,
     required this.onTap,

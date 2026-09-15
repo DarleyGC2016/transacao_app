@@ -25,7 +25,7 @@ class InputMoedaBr extends StatelessWidget {
       keyboardType: TextInputType.number,
 
       inputFormatters: textInputFormatter,
-
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         labelText: label,
         hintText: 'R\$ 0,00',
