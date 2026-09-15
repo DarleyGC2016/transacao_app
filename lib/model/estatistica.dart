@@ -1,4 +1,3 @@
-
 class Estatistica {
   late int _count;
   late double _sum;
@@ -25,26 +24,27 @@ class Estatistica {
 
   List<double> get values => _values;
 
-   set setCount( int contador){
+  set setCount(int contador) {
     _count = contador;
   }
-  set setAvg(double avg){
+
+  set setAvg(double avg) {
     _avg = avg;
   }
 
-  set setSum(double vSum){
+  set setSum(double vSum) {
     _sum = vSum;
   }
 
-  set setMax (double nMax){
+  set setMax(double nMax) {
     _max = nMax;
   }
 
-  set setMin (double nMin){
+  set setMin(double nMin) {
     _min = nMin;
   }
 
-   Estatistica({
+  Estatistica({
     required int contador,
     required double soma,
     required double media,
@@ -52,36 +52,31 @@ class Estatistica {
     required double maximo,
     required String tempo,
     required String data,
-    required List<double> valor
-  }){
-     _count = contador;
-     _sum = soma;
-     _avg = media;
-     _min = minimo;
-      _max = maximo;
-     _time = tempo ;
-     _date = data;
-     _values = valor;
-   }
-
-  factory Estatistica.fromJson(Map<String, dynamic> json) {
-     return Estatistica(
-        contador: (json['count']),
-        soma: (json['sum'] as num).toDouble(),
-        media: (json['avg'] as num).toDouble(),
-        minimo: (json['min'] as num).toDouble(),
-        maximo: (json['max'] as num).toDouble(),
-        tempo: (json['time'] as String),
-        data:  (json['date'] as String),
-        valor:(json['values'] as List<dynamic>)
-         .map((e) => (e as num).toDouble())
-         .toList()
-     );
-
+    required List<double> valor,
+  }) {
+    _count = contador;
+    _sum = soma;
+    _avg = media;
+    _min = minimo;
+    _max = maximo;
+    _time = tempo;
+    _date = data;
+    _values = valor;
   }
 
-  void sendError(String error){
-       throw Exception(error);
+  factory Estatistica.fromJson(Map<String, dynamic> json) {
+    return Estatistica(
+      contador: (json['count']),
+      soma: (json['sum'] as num).toDouble(),
+      media: (json['avg'] as num).toDouble(),
+      minimo: (json['min'] as num).toDouble(),
+      maximo: (json['max'] as num).toDouble(),
+      tempo: (json['time'] as String),
+      data: (json['date'] as String),
+      valor: (json['values'] as List<dynamic>)
+          .map((e) => (e as num).toDouble())
+          .toList(),
+    );
   }
 
   @override
@@ -92,8 +87,4 @@ class Estatistica {
         ' _min: $_min,'
         ' _max: $_max}';
   }
-
-
-
-
 }
