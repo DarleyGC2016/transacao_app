@@ -13,12 +13,15 @@ class DashboardGrafico extends StatelessWidget {
   final Estatistica estatistica;
   final VoidCallback onUpdate;
 
+  final double itemSelecionado;
+
   const DashboardGrafico({
     super.key,
     required this.animation,
     required this.numberFormat,
     required this.estatistica,
     required this.onUpdate,
+    required this.itemSelecionado,
   });
 
   @override
@@ -28,18 +31,6 @@ class DashboardGrafico extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Resumo das Transações",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff0F172A),
-            ),
-          ),
-          Text(
-            "Ultima transação: ${estatistica.date} às ${estatistica.time}\n",
-            style: TextStyle(color: Colors.grey),
-          ),
           AnimatedBuilder(
             animation: animation,
             builder: (context, child) {
@@ -119,27 +110,21 @@ class DashboardGrafico extends StatelessWidget {
             ],
           ),
 
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              tooltipPadding: const EdgeInsets.all(8),
+              getTooltipColor: (group) => Colors.green,
+              tooltipBorderRadius: BorderRadius.circular(8),
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                return BarTooltipItem(
+                  _formatarMoedaBr(rod.toY),
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                );
+              },
+            ),
+          ),
           // Barras
-          barGroups: es.values.asMap().entries.map((entry) {
-            int index = entry.key;
-            double value = entry.value * animation.value;
-
-            return BarChartGroupData(
-              x: index,
-              barRods: [
-                BarChartRodData(
-                  toY: value,
-                  width: 8,
-                  borderRadius: BorderRadius.circular(6),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFFFF00), Color(0xFF006400)],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
+          barGroups: _dataGroup(es),
         ),
       ),
     );
@@ -228,8 +213,8 @@ class DashboardGrafico extends StatelessWidget {
               ],
             ),
           ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: ButtonCard(
               label: "Nova Transação",
               onPressed: () async {
@@ -273,5 +258,41 @@ class DashboardGrafico extends StatelessWidget {
     }
 
     return value.toInt().toString();
+  }
+
+  String _formatarMoedaBr(double valor) {
+    final formatter = NumberFormat.currency(
+      locale: 'pt_BR',
+      symbol: 'R\$',
+      decimalDigits: 2,
+    );
+    return formatter.format(valor);
+  }
+
+  List<BarChartGroupData>? _dataGroup(Estatistica es) {
+    final filteredValues = es.values
+        .where((value) => value >= itemSelecionado)
+        .toList();
+
+    return filteredValues.asMap().entries.map((entry) {
+      int index = entry.key;
+      double value = entry.value * animation.value;
+
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: value,
+            width: 10,
+            borderRadius: BorderRadius.circular(6),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFFF00), Color(0xFF006400)],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+          ),
+        ],
+      );
+    }).toList();
   }
 }

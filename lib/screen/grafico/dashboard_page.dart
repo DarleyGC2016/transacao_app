@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:transacao/widgets/card/block_card.dart';
+import 'package:transacao/widgets/card/block_card_action.dart';
 import 'package:transacao/widgets/dashboard/dashboard_grafico.dart';
 
 import '../../model/estatistica.dart';
 import '../../services/transacao_service.dart';
-import '../../widgets/card/button_card.dart' show ButtonCard;
 import '../form/form_transacao_page.dart' show FormTransacaoPage;
 
 class DashboardPage extends StatefulWidget {
@@ -23,11 +23,13 @@ class _DashboardPageState extends State<DashboardPage>
   late NumberFormat _formato;
   late String msgNotFound;
 
+  double? _selectStartedFilter;
+
   @override
   void initState() {
     super.initState();
     msgNotFound = "NotFound";
-
+    _selectStartedFilter = 0.1;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -65,13 +67,49 @@ class _DashboardPageState extends State<DashboardPage>
     }
 
     if (snapshot.hasData) {
-      return DashboardGrafico(
-        animation: _animation,
-        numberFormat: _formato,
-        estatistica: snapshot.data!,
-        onUpdate: () {
-          _atualizarDashboard();
-        },
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Resumo das Transações",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff0F172A),
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 3.5,
+            children: [
+              Text(
+                "Ultima transação: ${snapshot.data!.date} às ${snapshot.data!.time}",
+                style: TextStyle(color: Colors.grey),
+              ),
+              IconButton(
+                onPressed: () {
+                  _infoGrafico(context);
+                },
+                icon: const Icon(Icons.info_outline),
+                tooltip: "Informações",
+              ),
+              selecionarValor(),
+            ],
+          ),
+          Flexible(
+            child: DashboardGrafico(
+              animation: _animation,
+              numberFormat: _formato,
+              estatistica: snapshot.data!,
+              itemSelecionado: _selectStartedFilter!,
+              onUpdate: () {
+                _atualizarDashboard();
+              },
+            ),
+          ),
+        ],
       );
     }
     if (snapshot.hasError) {
@@ -81,22 +119,26 @@ class _DashboardPageState extends State<DashboardPage>
         msgError = error.message;
       }
       if (msgError.trim().toLowerCase() == msgNotFound.trim().toLowerCase()) {
-        return _avisoNovaTransacao(
-          "Até este momento não foi registrada nenhuma transação!",
+        return Center(
+          child: BlockCardAction(
+            title: "Atenção",
+            value:
+                "Obs.: \tAinda não existe nenhuma Transação. Clique no botão e acima!",
+            color: 0xFFFFD700,
+            newScreen: FormTransacaoPage(),
+            onUpdate: _atualizarDashboard,
+            labelButton: "Nova Transação",
+            icon: Icon(Icons.warning, color: Colors.white),
+          ),
         );
       } else {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: BlockCard(
-                icon: Icon(Icons.warning, color: Colors.white),
-                title: 'Aviso',
-                value: msgError,
-                color: 0xFFFFD700,
-              ),
-            ),
-          ],
+        return Center(
+          child: BlockCard(
+            icon: Icon(Icons.warning, color: Colors.white),
+            title: 'Aviso',
+            value: msgError,
+            color: 0xFFFFD700,
+          ),
         );
       }
     } else {
@@ -112,55 +154,65 @@ class _DashboardPageState extends State<DashboardPage>
     });
   }
 
-  Widget _avisoNovaTransacao(String mensagem) {
-    return Padding(
-      padding: const EdgeInsets.all(9.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: BlockCard(
-              icon: Icon(Icons.warning, color: Colors.white),
-              title: 'Aviso',
-              value: mensagem,
-              color: 0xFFFFD700,
+  void _infoGrafico(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              "Gráfio Estatístico",
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          SizedBox(height: 20),
-          ButtonCard(
-            label: "Nova Transação",
-            onPressed: () async {
-              bool flag = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => FormTransacaoPage()),
-              );
+          backgroundColor: Color.from(alpha: 1, red: 0.8, green: 1, blue: 0.7),
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "\tEscolha uma opção para visualizar o gráfico a partir do valor selecionado.",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          titleTextStyle: TextStyle(),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-              if (flag == true) {
-                _atualizarDashboard();
-              }
-            },
-            icon: Icon(
-              Icons.monetization_on_outlined,
-              shadows: [
-                Shadow(
-                  color: Colors.black,
-                  blurRadius: 10,
-                  offset: Offset(2, 2),
-                ),
-              ],
-            ),
-            backgroundColor: Color.from(
-              alpha: 1,
-              red: 0.8,
-              green: 1,
-              blue: 0.7,
-            ),
-            textFontSize: 25,
-            buttonSize: Size(340, 100),
-          ),
-        ],
-      ),
+  Widget selecionarValor() {
+    final Map<double, String> opcoesNotas = {
+      0.1: 'R\$ 0.10',
+      1.0: 'R\$ 1,00',
+      5.0: 'R\$ 5,00',
+      10.0: 'R\$ 10,00',
+      20.0: 'R\$ 20,00',
+      25.0: 'R\$ 25,00',
+    };
+
+    return DropdownButton<double>(
+      value: opcoesNotas.containsKey(_selectStartedFilter)
+          ? _selectStartedFilter
+          : opcoesNotas.keys.first,
+      items: opcoesNotas.entries.map((entry) {
+        return DropdownMenuItem(value: entry.key, child: Text(entry.value));
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectStartedFilter = value;
+        });
+      },
     );
   }
 }

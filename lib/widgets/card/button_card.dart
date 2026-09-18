@@ -45,22 +45,17 @@ class ButtonCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[icon!, SizedBox(width: 6)],
-              Flexible(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  textScaler: TextScaler.noScaling,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[icon!, SizedBox(width: 8)],
+                Flexible(child: Text(label)),
+              ],
+            ),
           ),
         ],
       ),
