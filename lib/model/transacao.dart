@@ -1,6 +1,14 @@
 class Transacao {
-  final double _valor;
-  final String _dataHora;
+  double _valor;
+  String _dataHora;
+
+  void setValor(double value) {
+    _valor = value;
+  }
+
+  void setDataHora(String value) {
+    _dataHora = value;
+  }
 
   Transacao({required double valor, required String dataHora})
     : _dataHora = dataHora,

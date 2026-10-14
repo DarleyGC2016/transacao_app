@@ -29,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage>
   void initState() {
     super.initState();
     msgNotFound = "NotFound";
-    _selectStartedFilter = 0.1;
+    _selectStartedFilter = 0.01;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -155,7 +155,7 @@ class _DashboardPageState extends State<DashboardPage>
 
   void _infoGrafico(BuildContext context) {
     final Map<double, String> opcoesNotas = {
-      0.1: 'R\$ 0.10',
+      0.01: 'R\$ 0.01',
       1.0: 'R\$ 1,00',
       5.0: 'R\$ 5,00',
       10.0: 'R\$ 10,00',
@@ -177,7 +177,7 @@ class _DashboardPageState extends State<DashboardPage>
         return AlertDialog(
           title: Center(
             child: Text(
-              "Gráfio Estatístico",
+              "Estatística",
               style: TextStyle(
                 color: Colors.green,
                 fontSize: 25,

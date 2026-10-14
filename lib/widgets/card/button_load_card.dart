@@ -37,6 +37,7 @@ class ButtonLoadCard extends StatelessWidget {
             fontSize: textFontSize,
             fontWeight: FontWeight.bold,
           ),
+          alignment: Alignment.center,
           fixedSize: buttonSize,
         ),
         child: flag

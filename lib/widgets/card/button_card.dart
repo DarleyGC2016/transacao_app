@@ -22,42 +22,38 @@ class ButtonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        elevation: 8,
-        shadowColor: Colors.black.withValues(alpha: 1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.5),
+    return Flexible(
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          elevation: 8,
+          shadowColor: Colors.black.withValues(alpha: 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.5),
+          ),
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
+          textStyle: TextStyle(
+            fontSize: textFontSize,
+            fontWeight: FontWeight.bold,
+          ),
+          alignment: Alignment.center,
+          fixedSize: buttonSize,
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         ),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
-        textStyle: TextStyle(
-          fontSize: textFontSize,
-          fontWeight: FontWeight.bold,
-        ),
-        alignment: Alignment.center,
-        fixedSize: buttonSize,
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      ),
 
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[icon!, SizedBox(width: 8)],
                 Flexible(child: Text(label)),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
