@@ -67,8 +67,6 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
               child: Form(
                 key: _formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Container(
                       width: 64,
@@ -83,9 +81,19 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Text('Formulario'),
 
+                    Text(
+                      'Vamos registrar uma transação?',
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Registre um valor e informe quando aconteceu.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16),
                     InputMoedaBr(
                       label: "Dinheiro",
                       moeda: _moeda,
@@ -151,7 +159,7 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
                           textFontSize: 20,
                           buttonSize: Size(160, 80),
                         ),
-                        SizedBox(width: 10),
+                        SizedBox(width: 10, height: 35),
                         ButtonCard(
                           label: "Cancelar",
                           onPressed: () {
@@ -166,7 +174,7 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
                           ),
                           textColor: Colors.white,
                           textFontSize: 20,
-                          buttonSize: Size(160, 80),
+                          buttonSize: Size(169, 80.9),
                         ),
                       ],
                     ),
