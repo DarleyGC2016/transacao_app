@@ -82,7 +82,7 @@ class _DashboardPageState extends State<DashboardPage>
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 1.5,
+            spacing: 3.5,
             children: [
               Text(
                 "Ultima transação: ${snapshot.data!.date} às ${snapshot.data!.time}",
@@ -95,6 +95,7 @@ class _DashboardPageState extends State<DashboardPage>
                 icon: const Icon(Icons.info_outline),
                 tooltip: "Informações",
               ),
+              selecionarValor(),
             ],
           ),
           Flexible(
@@ -154,30 +155,13 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   void _infoGrafico(BuildContext context) {
-    final Map<double, String> opcoesNotas = {
-      0.01: 'R\$ 0.01',
-      1.0: 'R\$ 1,00',
-      5.0: 'R\$ 5,00',
-      10.0: 'R\$ 10,00',
-      50.0: 'R\$ 50,00',
-      100.00: 'R\$ 100,00',
-      500.00: 'R\$ 500,00',
-      1000.00: 'R\$ 1000,00',
-      5000.00: 'R\$ 5000,00',
-      10000.00: 'R\$ 10000,00',
-    };
-
-    double? valorAtual = opcoesNotas.containsKey(_selectStartedFilter)
-        ? _selectStartedFilter
-        : opcoesNotas.keys.first;
-
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Center(
             child: Text(
-              "Estatística",
+              "Gráfio Estatístico",
               style: TextStyle(
                 color: Colors.green,
                 fontSize: 25,
@@ -186,57 +170,48 @@ class _DashboardPageState extends State<DashboardPage>
             ),
           ),
           backgroundColor: Color.from(alpha: 1, red: 0.8, green: 1, blue: 0.7),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setDialogState) {
-              return SizedBox(
-                height: 200,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "\tEscolha uma opção para visualizar o gráfico a partir do valor selecionado.",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    DropdownButton<double>(
-                      value: valorAtual,
-                      items: opcoesNotas.entries.map((entry) {
-                        return DropdownMenuItem(
-                          value: entry.key,
-                          child: Text(entry.value),
-                        );
-                      }).toList(),
-                      onChanged: (double? value) {
-                        if (value != null) {
-                          setDialogState(() {
-                            valorAtual = value;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "\tEscolha uma opção para visualizar o gráfico a partir do valor selecionado.",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
           titleTextStyle: TextStyle(),
           actions: [
             TextButton(
               onPressed: () {
-                setState(() {
-                  _selectStartedFilter = valorAtual;
-                  _atualizarDashboard();
-                  Navigator.pop(context, true);
-                });
+                Navigator.pop(context, true);
               },
               child: Text("OK"),
             ),
           ],
         );
+      },
+    );
+  }
+
+  Widget selecionarValor() {
+    final Map<double, String> opcoesNotas = {
+      0.1: 'R\$ 0.10',
+      1.0: 'R\$ 1,00',
+      5.0: 'R\$ 5,00',
+      10.0: 'R\$ 10,00',
+      20.0: 'R\$ 20,00',
+      25.0: 'R\$ 25,00',
+    };
+
+    return DropdownButton<double>(
+      value: opcoesNotas.containsKey(_selectStartedFilter)
+          ? _selectStartedFilter
+          : opcoesNotas.keys.first,
+      items: opcoesNotas.entries.map((entry) {
+        return DropdownMenuItem(value: entry.key, child: Text(entry.value));
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectStartedFilter = value;
+        });
       },
     );
   }
