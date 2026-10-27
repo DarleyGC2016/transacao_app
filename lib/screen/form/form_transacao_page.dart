@@ -93,7 +93,7 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
                     InputMoedaBr(
                       label: "Dinheiro",
                       moeda: _moeda,
