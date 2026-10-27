@@ -142,7 +142,7 @@ class _FormTransacaoPageState extends State<FormTransacaoPage>
                         _selectHora(context);
                       },
                     ),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 26),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
